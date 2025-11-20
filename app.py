@@ -1,3 +1,4 @@
+<function_calls>
 <invoke name="create_file">
 <parameter name="path">app.py</parameter>
 <parameter name="content">import streamlit as st
@@ -216,7 +217,7 @@ def create_guidance_record(doc, student_info):
     # 指导记录行
     for i in range(2, 10):
         cells = table.rows[i].cells
-        cells[0].text = f'    月    日'
+        cells[0].text = '    月    日'
         cells[1].merge(cells[3])
   
     # 指导教师签名行
@@ -334,6 +335,27 @@ def create_topic_summary(doc, student_info):
     headers = ['序号', '学号', '姓名', '项目名称', '指导教师', '所在学院']
     for i, header in enumerate(headers):
         cell = table.rows[0].cells[i]
-        cell.text =
-
-
+        cell.text = header
+        for paragraph in cell.paragraphs:
+            for run in paragraph.runs:
+                run.font.name = '宋体'
+                run.font.size = Pt(12)
+                run.font.bold = True
+                run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+  
+    # 数据行
+    cells = table.rows[1].cells
+    cells[0].text = '1'
+    cells[1].text = student_info['学号']
+    cells[2].text = student_info['姓名']
+    cells[3].text = student_info['项目名称']
+    cells[4].text = student_info['指导教师']
+    cells[5].text = student_info['学院']
+  
+    # 设置表格字体
+    for cell in table.rows[1].cells:
+        for paragraph in cell.paragraphs:
+            for run in paragraph.runs:
+                run.font.name = '宋体'
+                run.font.size = Pt(12)
+                run._element.rPr.rFonts.set(qn('w:eastAsia'),
