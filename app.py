@@ -1,5 +1,3 @@
-我来帮你开发这个岗前综合技能培训报告生成工具。我会创建一个完整的Streamlit应用，能够生成符合模板要求的Word文档。
-
 <function_calls>
 <invoke name="create_file">
 <parameter name="path">app.py</parameter>
@@ -338,3 +336,4 @@ def create_topic_summary(doc, student_info):
     for i, header in enumerate(headers):
         cell = table.rows[0].cells[i]
         cell.text =
+
