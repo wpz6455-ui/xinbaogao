@@ -1,76 +1,38 @@
 <function_calls>
+<invoke name="delete_file">
+<parameter name="path">app.py</parameter>
+</invoke>
 <invoke name="create_file">
 <parameter name="path">app.py</parameter>
 <parameter name="content">import streamlit as st
 from docx import Document
-from docx.shared import Pt, RGBColor, Inches, Cm
+from docx.shared import Pt, Inches, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 from io import BytesIO
-import datetime
 
-def set_cell_border(cell, **kwargs):
-    """设置单元格边框"""
-    tc = cell._tc
-    tcPr = tc.get_or_add_tcPr()
-  
-    tcBorders = OxmlElement('w:tcBorders')
-    for edge in ('top', 'left', 'bottom', 'right'):
-        edge_data = kwargs.get(edge)
-        if edge_data:
-            tag = 'w:{}'.format(edge)
-            element = OxmlElement(tag)
-            element.set(qn('w:val'), 'single')
-            element.set(qn('w:sz'), '4')
-            element.set(qn('w:space'), '0')
-            element.set(qn('w:color'), '000000')
-            tcBorders.append(element)
-  
-    tcPr.append(tcBorders)
-
-def set_cell_shading(cell, fill):
-    """设置单元格背景色"""
-    shading_elm = OxmlElement('w:shd')
-    shading_elm.set(qn('w:fill'), fill)
-    cell._element.get_or_add_tcPr().append(shading_elm)
-
-def add_paragraph_with_format(doc, text, font_name='宋体', font_size=12, bold=False, 
-                              alignment=WD_ALIGN_PARAGRAPH.LEFT, space_before=0, space_after=0):
-    """添加格式化段落"""
-    paragraph = doc.add_paragraph()
-    paragraph.alignment = alignment
-    paragraph.paragraph_format.space_before = Pt(space_before)
-    paragraph.paragraph_format.space_after = Pt(space_after)
-    paragraph.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
-  
+def add_run_with_font(paragraph, text, font_name='宋体', font_size=12, bold=False):
+    """添加带格式的文本运行"""
     run = paragraph.add_run(text)
     run.font.name = font_name
     run.font.size = Pt(font_size)
     run.font.bold = bold
     run._element.rPr.rFonts.set(qn('w:eastAsia'), font_name)
-  
-    return paragraph
+    return run
 
 def create_cover_page(doc, student_info):
     """创建封面页"""
     # 标题上方的星号和学号
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run(f"★            学号：{student_info['学号']}")
-    run.font.name = '宋体'
-    run.font.size = Pt(14)
-    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+    add_run_with_font(p, f"★            学号：{student_info['学号']}", font_size=14)
   
     # 主标题
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_before = Pt(36)
-    run = p.add_run('岗前综合技能培训报告书')
-    run.font.name = '宋体'
-    run.font.size = Pt(22)
-    run.font.bold = True
-    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+    add_run_with_font(p, '岗前综合技能培训报告书', font_size=22, bold=True)
   
     # 空行
     for _ in range(3):
@@ -88,10 +50,7 @@ def create_cover_page(doc, student_info):
         p = doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p.paragraph_format.space_after = Pt(12)
-        run = p.add_run(line)
-        run.font.name = '宋体'
-        run.font.size = Pt(16)
-        run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+        add_run_with_font(p, line, font_size=16)
   
     # 底部学院名称
     for _ in range(3):
@@ -99,11 +58,7 @@ def create_cover_page(doc, student_info):
   
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run('海南软件职业技术学院')
-    run.font.name = '宋体'
-    run.font.size = Pt(18)
-    run.font.bold = True
-    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+    add_run_with_font(p, '海南软件职业技术学院', font_size=18, bold=True)
   
     doc.add_page_break()
 
@@ -112,23 +67,13 @@ def create_task_book(doc, student_info):
     # 标题
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run('海南软件职业技术学院岗前综合技能培训任务书')
-    run.font.name = '宋体'
-    run.font.size = Pt(16)
-    run.font.bold = True
-    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+    add_run_with_font(p, '海南软件职业技术学院岗前综合技能培训任务书', font_size=16, bold=True)
   
     doc.add_paragraph()
   
     # 创建表格
     table = doc.add_table(rows=6, cols=4)
     table.style = 'Table Grid'
-  
-    # 设置列宽
-    table.columns[0].width = Cm(3)
-    table.columns[1].width = Cm(5)
-    table.columns[2].width = Cm(4)
-    table.columns[3].width = Cm(5)
   
     # 第一行
     cells = table.rows[0].cells
@@ -141,7 +86,7 @@ def create_task_book(doc, student_info):
     cells = table.rows[1].cells
     cells[0].text = '姓名'
     cells[1].text = student_info['姓名']
-    cells[2].text = '岗前综合技能\n培训指导教师'
+    cells[2].text = '岗前综合技能培训指导教师'
     cells[3].text = student_info['指导教师']
   
     # 第三行
@@ -156,13 +101,13 @@ def create_task_book(doc, student_info):
   
     # 第五行
     cells = table.rows[4].cells
-    cells[0].text = '岗前综合技能培训内容及培养目标'
-    cells[0].merge(cells[3])
+    merged_cell = cells[0].merge(cells[3])
+    merged_cell.text = '岗前综合技能培训内容及培养目标'
   
     # 第六行
     cells = table.rows[5].cells
-    cells[0].text = '岗前综合技能培训形式'
-    cells[0].merge(cells[3])
+    merged_cell = cells[0].merge(cells[3])
+    merged_cell.text = '岗前综合技能培训形式'
   
     # 设置表格字体
     for row in table.rows:
@@ -174,12 +119,15 @@ def create_task_book(doc, student_info):
                     run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
   
     doc.add_paragraph()
-    add_paragraph_with_format(doc, '岗前综合技能培训指导教师签名：', font_size=12)
+    p = doc.add_paragraph()
+    add_run_with_font(p, '岗前综合技能培训指导教师签名：', font_size=12)
     doc.add_paragraph()
-    add_paragraph_with_format(doc, '岗前综合技能培训领导小组审查意见：', font_size=12)
+    p = doc.add_paragraph()
+    add_run_with_font(p, '岗前综合技能培训领导小组审查意见：', font_size=12)
     doc.add_paragraph()
     doc.add_paragraph()
-    add_paragraph_with_format(doc, '备注：此表回收后交院部按班级为单位装订存档。', font_size=10.5)
+    p = doc.add_paragraph()
+    add_run_with_font(p, '备注：此表回收后交院部按班级为单位装订存档。', font_size=10.5)
   
     doc.add_page_break()
 
@@ -188,11 +136,7 @@ def create_guidance_record(doc, student_info):
     # 标题
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run('岗前综合技能培训指导记录表')
-    run.font.name = '宋体'
-    run.font.size = Pt(16)
-    run.font.bold = True
-    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+    add_run_with_font(p, '岗前综合技能培训指导记录表', font_size=16, bold=True)
   
     doc.add_paragraph()
   
@@ -204,7 +148,7 @@ def create_guidance_record(doc, student_info):
     cells = table.rows[0].cells
     cells[0].text = '学号'
     cells[1].text = student_info['学号']
-    cells[2].text = '岗前综合技能\n培训指导教师'
+    cells[2].text = '岗前综合技能培训指导教师'
     cells[3].text = student_info['指导教师']
   
     # 第二行
@@ -222,13 +166,13 @@ def create_guidance_record(doc, student_info):
   
     # 指导教师签名行
     cells = table.rows[10].cells
-    cells[0].text = '指导教师签名（每次需签名）：'
-    cells[0].merge(cells[3])
+    merged_cell = cells[0].merge(cells[3])
+    merged_cell.text = '指导教师签名（每次需签名）：'
   
     # 备注行
     cells = table.rows[11].cells
-    cells[0].text = '备注：此表由学生根据老师每次指导的内容填写，指导教师签字后，学生保存，待上交文档时交学院，学院按班级为单位装订存档。'
-    cells[0].merge(cells[3])
+    merged_cell = cells[0].merge(cells[3])
+    merged_cell.text = '备注：此表由学生根据老师每次指导的内容填写，指导教师签字后，学生保存，待上交文档时交学院，学院按班级为单位装订存档。'
   
     # 设置表格字体
     for row in table.rows:
@@ -246,21 +190,13 @@ def create_evaluation_form(doc, student_info):
     # 标题
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run('岗前综合技能培训成绩评定表')
-    run.font.name = '宋体'
-    run.font.size = Pt(16)
-    run.font.bold = True
-    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+    add_run_with_font(p, '岗前综合技能培训成绩评定表', font_size=16, bold=True)
   
     doc.add_paragraph()
   
     # 创建表格
     table = doc.add_table(rows=10, cols=2)
     table.style = 'Table Grid'
-  
-    # 设置列宽
-    table.columns[0].width = Cm(5)
-    table.columns[1].width = Cm(12)
   
     # 填充内容
     table.rows[0].cells[0].text = '岗前综合技能培训成绩评定'
@@ -303,9 +239,12 @@ def create_evaluation_form(doc, student_info):
                     run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
   
     doc.add_paragraph()
-    add_paragraph_with_format(doc, '注：1.如果初评成绩<90分，则"岗前综合技能培训最终成绩评定"栏由指导教师直接依据初评成绩填写，并确定', font_size=9)
-    add_paragraph_with_format(doc, '2.初评成绩≥90分（优秀）才进行答辩，其他的不需答辩。', font_size=9)
-    add_paragraph_with_format(doc, '3.此表学院需复印一份以班级为单位装订存档。', font_size=9)
+    p = doc.add_paragraph()
+    add_run_with_font(p, '注：1.如果初评成绩<90分，则"岗前综合技能培训最终成绩评定"栏由指导教师直接依据初评成绩填写，并确定', font_size=9)
+    p = doc.add_paragraph()
+    add_run_with_font(p, '2.初评成绩≥90分（优秀）才进行答辩，其他的不需答辩。', font_size=9)
+    p = doc.add_paragraph()
+    add_run_with_font(p, '3.此表学院需复印一份以班级为单位装订存档。', font_size=9)
   
     doc.add_page_break()
 
@@ -314,18 +253,11 @@ def create_topic_summary(doc, student_info):
     # 标题
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run('海南软件职业技术学院岗前综合技能培训选题汇总表')
-    run.font.name = '宋体'
-    run.font.size = Pt(16)
-    run.font.bold = True
-    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+    add_run_with_font(p, '海南软件职业技术学院岗前综合技能培训选题汇总表', font_size=16, bold=True)
   
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    run = p.add_run(f'学院：{student_info["学院"]}')
-    run.font.name = '宋体'
-    run.font.size = Pt(12)
-    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+    add_run_with_font(p, f'学院：{student_info["学院"]}', font_size=12)
   
     # 创建表格
     table = doc.add_table(rows=2, cols=6)
@@ -358,4 +290,61 @@ def create_topic_summary(doc, student_info):
             for run in paragraph.runs:
                 run.font.name = '宋体'
                 run.font.size = Pt(12)
-                run._element.rPr.rFonts.set(qn('w:eastAsia'),
+                run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+  
+    doc.add_paragraph()
+    p = doc.add_paragraph()
+    add_run_with_font(p, '备注：此表回收后交学院按班级为单位装订存档。', font_size=10.5)
+  
+    doc.add_page_break()
+
+def create_report_instructions(doc):
+    """创建报告撰写说明页"""
+    # 标题
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    add_run_with_font(p, '岗前综合技能培训报告', font_size=16, bold=True)
+  
+    doc.add_paragraph()
+  
+    # 撰写说明
+    p = doc.add_paragraph()
+    add_run_with_font(p, '撰写说明：', font_size=12, bold=True)
+    add_run_with_font(p, '报告分为四大部分，段落要求1.5倍行距，整个报告内容不少于5页，具体内容及格式要求如下：', font_size=12)
+  
+    doc.add_paragraph()
+  
+    # 一、岗前培训目的
+    p = doc.add_paragraph()
+    add_run_with_font(p, '一、岗前培训目的', font_size=14, bold=True)
+  
+    p = doc.add_paragraph()
+    add_run_with_font(p, '（介绍岗前培训目的和意义，岗前培训单位的发展情况及学习要求等）', font_size=12)
+  
+    p = doc.add_paragraph()
+    add_run_with_font(p, '1、小标题', font_size=12, bold=True)
+  
+    p = doc.add_paragraph()
+    p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
+    add_run_with_font(p, ' XXXXXXX（正文：宋体，小四号字）', font_size=12)
+  
+    p = doc.add_paragraph()
+    add_run_with_font(p, '2、小标题', font_size=12, bold=True)
+  
+    p = doc.add_paragraph()
+    p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
+    add_run_with_font(p, 'XXXXXXX（正文：宋体，小四号字）', font_size=12)
+  
+    p = doc.add_paragraph()
+    add_run_with_font(p, '………', font_size=12)
+  
+    # 二、培训内容
+    p = doc.add_paragraph()
+    add_run_with_font(p, '二、培训内容', font_size=14, bold=True)
+  
+    p = doc.add_paragraph()
+    add_run_with_font(p, '1、小标题', font_size=12, bold=True)
+  
+    p = doc.add_paragraph()
+    p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
+    add_run_with_font(p, ' XXXXXXX（正文：宋体，小四号字）', font_size=12)
