@@ -1,4 +1,3 @@
-<function_calls>
 <invoke name="create_file">
 <parameter name="path">app.py</parameter>
 <parameter name="content">import streamlit as st
@@ -336,4 +335,5 @@ def create_topic_summary(doc, student_info):
     for i, header in enumerate(headers):
         cell = table.rows[0].cells[i]
         cell.text =
+
 
