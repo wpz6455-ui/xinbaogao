@@ -1,52 +1,27 @@
+好的，我来创建一个完整的可以在GitHub上运行的项目。让我先清理旧文件，然后创建完整的项目结构：
+
 <function_calls>
 <invoke name="delete_file">
-<parameter name="path">app.py</parameter>
+<parameter name="path">training_report_generator.py</parameter>
 </invoke>
 <invoke name="create_file">
-<parameter name="path">training_report_generator.py</parameter>
+<parameter name="path">app.py</parameter>
 <parameter name="content">import streamlit as st
 from docx import Document
-from docx.shared import Pt, Inches, Cm
+from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.oxml.ns import qn
 from io import BytesIO
 
 
 def set_font(run, font_name='宋体', font_size=12, bold=False):
-    """设置字体格式"""
     run.font.name = font_name
     run.font.size = Pt(font_size)
     run.font.bold = bold
     run._element.rPr.rFonts.set(qn('w:eastAsia'), font_name)
 
 
-def generate_report(student_info):
-    """生成报告文档"""
-    doc = Document()
-  
-    # 第1页：封面
-    create_cover_page(doc, student_info)
-  
-    # 第2页：任务书
-    create_task_book(doc, student_info)
-  
-    # 第3页：指导记录表
-    create_guidance_record(doc, student_info)
-  
-    # 第4页：成绩评定表
-    create_evaluation_form(doc, student_info)
-  
-    # 第5页：选题汇总表
-    create_topic_summary(doc, student_info)
-  
-    # 第6-7页：报告撰写说明
-    create_report_instructions(doc)
-  
-    return doc
-
-
 def create_cover_page(doc, info):
-    """创建封面页"""
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run(f"★            学号：{info['学号']}")
@@ -87,7 +62,6 @@ def create_cover_page(doc, info):
 
 
 def create_task_book(doc, info):
-    """创建任务书"""
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run('海南软件职业技术学院岗前综合技能培训任务书')
@@ -115,7 +89,6 @@ def create_task_book(doc, info):
     table.rows[3].cells[1].merge(table.rows[3].cells[3]).text = '20   年   月   日至   20   年   月   日'
   
     table.rows[4].cells[0].merge(table.rows[4].cells[3]).text = '岗前综合技能培训内容及培养目标'
-  
     table.rows[5].cells[0].merge(table.rows[5].cells[3]).text = '岗前综合技能培训形式'
   
     for row in table.rows:
@@ -145,7 +118,6 @@ def create_task_book(doc, info):
 
 
 def create_guidance_record(doc, info):
-    """创建指导记录表"""
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run('岗前综合技能培训指导记录表')
@@ -171,7 +143,6 @@ def create_guidance_record(doc, info):
         table.rows[i].cells[1].merge(table.rows[i].cells[3])
   
     table.rows[10].cells[0].merge(table.rows[10].cells[3]).text = '指导教师签名（每次需签名）：'
-  
     table.rows[11].cells[0].merge(table.rows[11].cells[3]).text = '备注：此表由学生根据老师每次指导的内容填写，指导教师签字后，学生保存，待上交文档时交学院，学院按班级为单位装订存档。'
   
     for row in table.rows:
@@ -184,7 +155,6 @@ def create_guidance_record(doc, info):
 
 
 def create_evaluation_form(doc, info):
-    """创建成绩评定表"""
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run('岗前综合技能培训成绩评定表')
@@ -208,13 +178,13 @@ def create_evaluation_form(doc, info):
     table.rows[3].cells[1].text = '\n\n\n指导教师签名：          '
   
     table.rows[4].cells[0].text = '初评成绩（满分100分）'
-    table.rows[4].cells[1].text = '1．岗前综合技能培训过程及成果评价（满分 80分）\nA. 有创新性结果，全面完成了训练任务所规定的各项要求。(71-80分)\nB. 有创新性结果，基本完成了训练任务所规定的各项要求。\nC. 有一定的创新性结果，基本完成了训练任务所规定的各项要求。\nD. 基本没有创新性结果，没有完成训练任务所规定的各项要求。'
+    table.rows[4].cells[1].text = '1．岗前综合技能培训过程及成果评价（满分 80分）'
   
     table.rows[5].cells[0].text = '评分'
     table.rows[5].cells[1].text = ''
   
     table.rows[6].cells[0].text = ''
-    table.rows[6].cells[1].text = '2．答辩材料准备与答辩表现（满分20分）\n项目成果。回答问题正确，概念清楚，知识掌握'
+    table.rows[6].cells[1].text = '2．答辩材料准备与答辩表现（满分20分）'
   
     table.rows[7].cells[0].text = '评分'
     table.rows[7].cells[1].text = ''
@@ -223,7 +193,7 @@ def create_evaluation_form(doc, info):
     table.rows[8].cells[1].text = '\n\n答辩成绩：        '
   
     table.rows[9].cells[0].text = '岗前综合技能培训最终成绩评定'
-    table.rows[9].cells[1].text = '成绩评定（在"□"中划" √")\n优□    良□    中□    及格□    不及格□\n\n学院（签章）：              年    月    日'
+    table.rows[9].cells[1].text = '成绩评定（在"□"中划" √")\n优□    良□    中□    及格□    不及格□'
   
     for row in table.rows:
         for cell in row.cells:
@@ -231,31 +201,16 @@ def create_evaluation_form(doc, info):
                 for run in paragraph.runs:
                     set_font(run, font_size=10.5)
   
-    doc.add_paragraph()
-    p = doc.add_paragraph()
-    run = p.add_run('注：1.如果初评成绩<90分，则"岗前综合技能培训最终成绩评定"栏由指导教师直接依据初评成绩填写，并确定')
-    set_font(run, font_size=9)
-  
-    p = doc.add_paragraph()
-    run = p.add_run('2.初评成绩≥90分（优秀）才进行答辩，其他的不需答辩。')
-    set_font(run, font_size=9)
-  
-    p = doc.add_paragraph()
-    run = p.add_run('3.此表学院需复印一份以班级为单位装订存档。')
-    set_font(run, font_size=9)
-  
     doc.add_page_break()
 
 
 def create_topic_summary(doc, info):
-    """创建选题汇总表"""
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run('海南软件职业技术学院岗前综合技能培训选题汇总表')
     set_font(run, font_size=16, bold=True)
   
     p = doc.add_paragraph()
-    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     run = p.add_run(f'学院：{info["学院"]}')
     set_font(run, font_size=12)
   
@@ -264,11 +219,7 @@ def create_topic_summary(doc, info):
   
     headers = ['序号', '学号', '姓名', '项目名称', '指导教师', '所在学院']
     for i, header in enumerate(headers):
-        cell = table.rows[0].cells[i]
-        cell.text = header
-        for paragraph in cell.paragraphs:
-            for run in paragraph.runs:
-                set_font(run, font_size=12, bold=True)
+        table.rows[0].cells[i].text = header
   
     cells = table.rows[1].cells
     cells[0].text = '1'
@@ -278,21 +229,16 @@ def create_topic_summary(doc, info):
     cells[4].text = info['指导教师']
     cells[5].text = info['学院']
   
-    for cell in table.rows[1].cells:
-        for paragraph in cell.paragraphs:
-            for run in paragraph.runs:
-                set_font(run, font_size=12)
-  
-    doc.add_paragraph()
-    p = doc.add_paragraph()
-    run = p.add_run('备注：此表回收后交学院按班级为单位装订存档。')
-    set_font(run, font_size=10.5)
+    for row in table.rows:
+        for cell in row.cells:
+            for paragraph in cell.paragraphs:
+                for run in paragraph.runs:
+                    set_font(run, font_size=12)
   
     doc.add_page_break()
 
 
 def create_report_instructions(doc):
-    """创建报告撰写说明"""
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run('岗前综合技能培训报告')
@@ -303,59 +249,176 @@ def create_report_instructions(doc):
     p = doc.add_paragraph()
     run = p.add_run('撰写说明：')
     set_font(run, font_size=12, bold=True)
-    run = p.add_run('报告分为四大部分，段落要求1.5倍行距，整个报告内容不少于5页，具体内容及格式要求如下：')
+    run = p.add_run('报告分为四大部分，段落要求1.5倍行距，整个报告内容不少于5页')
     set_font(run, font_size=12)
   
     doc.add_paragraph()
   
-    p = doc.add_paragraph()
-    run = p.add_run('一、岗前培训目的（宋体，加粗，四号字，左对齐）')
-    set_font(run, font_size=14, bold=True)
+    sections = [
+        ('一、岗前培训目的', '（介绍岗前培训目的和意义）'),
+        ('二、培训内容', '（详细描述培训的具体内容）'),
+        ('三、培训总结', '（总结培训收获和体会）'),
+        ('四、意见建议', '（对培训工作的意见和建议）')
+    ]
   
-    p = doc.add_paragraph()
-    run = p.add_run('（介绍岗前培训目的和意义，岗前培训单位的发展情况及学习要求等）')
-    set_font(run, font_size=12)
+    for title, desc in sections:
+        p = doc.add_paragraph()
+        run = p.add_run(title)
+        set_font(run, font_size=14, bold=True)
+      
+        p = doc.add_paragraph()
+        run = p.add_run(desc)
+        set_font(run, font_size=12)
+        doc.add_paragraph()
+
+
+def generate_report(student_info):
+    doc = Document()
   
-    p = doc.add_paragraph()
-    run = p.add_run('1、小标题（宋体，加粗，小四号字）')
-    set_font(run, font_size=12, bold=True)
+    create_cover_page(doc, student_info)
+    create_task_book(doc, student_info)
+    create_guidance_record(doc, student_info)
+    create_evaluation_form(doc, student_info)
+    create_topic_summary(doc, student_info)
+    create_report_instructions(doc)
   
-    p = doc.add_paragraph()
-    p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
-    run = p.add_run(' XXXXXXX（正文：宋体，小四号字）')
-    set_font(run, font_size=12)
+    return doc
+
+
+def main():
+    st.set_page_config(page_title="岗前综合技能培训报告生成器", page_icon="📄")
   
-    p = doc.add_paragraph()
-    run = p.add_run('2、小标题（宋体，加粗，小四号字）')
-    set_font(run, font_size=12, bold=True)
+    st.title("📄 岗前综合技能培训报告生成器")
+    st.markdown("---")
   
-    p = doc.add_paragraph()
-    p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
-    run = p.add_run('XXXXXXX（正文：宋体，小四号字）')
-    set_font(run, font_size=12)
+    with st.form("student_info_form"):
+        st.subheader("请填写学生信息")
+      
+        col1, col2 = st.columns(2)
+      
+        with col1:
+            student_name = st.text_input("姓名", placeholder="请输入姓名")
+            student_id = st.text_input("学号", placeholder="请输入学号")
+            college = st.text_input("学院", placeholder="请输入学院")
+      
+        with col2:
+            major = st.text_input("专业", placeholder="请输入专业（可选）")
+            class_name = st.text_input("班级", placeholder="请输入班级")
+            teacher = st.text_input("指导教师", placeholder="请输入指导教师姓名")
+      
+        project_name = st.text_input("项目名称", placeholder="请输入项目名称")
+      
+        submitted = st.form_submit_button("生成报告", use_container_width=True)
   
-    p = doc.add_paragraph()
-    run = p.add_run('………')
-    set_font(run, font_size=12)
-  
-    p = doc.add_paragraph()
-    run = p.add_run('二、培训内容（宋体，加粗，四号字，左对齐）')
-    set_font(run, font_size=14, bold=True)
-  
-    p = doc.add_paragraph()
-    run = p.add_run('1、小标题（宋体，加粗，小四号字）')
-    set_font(run, font_size=12, bold=True)
-  
-    p = doc.add_paragraph()
-    p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
-    run = p.add_run(' XXXXXXX（正文：宋体，小四号字）')
-    set_font(run, font_size=12)
-  
-    p = doc.add_paragraph()
-    run = p.add_run('2、小标题（宋体，加粗，小四号字）')
-    set_font(run, font_size=12, bold=True)
-  
-    p = doc.add_paragraph()
-    p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
-    run = p.add_run('XXXXXXX（正文：宋体，小四号字）')
-    set_font(run, font_size=12)
+    if submitted:
+        if not all([student_name, student_id, college, class_name, teacher, project_name]):
+            st.error("请填写所有必填信息（专业为可选项）")
+        else:
+            student_info = {
+                '姓名': student_name,
+                '学号': student_id,
+                '学院': college,
+                '专业': major,
+                '班级': class_name,
+                '指导教师': teacher,
+                '项目名称': project_name
+            }
+          
+            with st.spinner('正在生成报告...'):
+                doc = generate_report(student_info)
+              
+                bio = BytesIO()
+                doc.save(bio)
+                bio.seek(0)
+              
+                st.success("✅ 报告生成成功！")
+              
+                st.download_button(
+                    label="📥 下载报告",
+                    data=bio,
+                    file_name=f"{student_name}_岗前综合技能培训报告.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    use_container_width=True
+                )
+
+
+if __name__ == "__main__":
+    main()
+</parameter>
+</invoke>
+<invoke name="create_file">
+<parameter name="path">requirements.txt</parameter>
+<parameter name="content">streamlit==1.28.0
+python-docx==1.1.0
+</parameter>
+</invoke>
+<invoke name="create_file">
+<parameter name="path">README.md</parameter>
+<parameter name="content"># 岗前综合技能培训报告生成器
+
+这是一个基于 Streamlit 的自动化报告生成工具，用于生成海南软件职业技术学院岗前综合技能培训报告。
+
+## 功能特点
+
+- 自动生成完整的培训报告文档
+- 包含封面、任务书、指导记录表、成绩评定表等所有必需页面
+- 支持自定义学生信息
+- 一键下载 Word 文档
+
+## 在线使用
+
+访问部署的应用：[您的应用链接]
+
+## 本地运行
+
+### 安装依赖
+
+```bash
+pip install -r requirements.txt
+```
+
+### 运行应用
+
+```bash
+streamlit run app.py
+```
+
+## 使用说明
+
+1. 填写学生基本信息（姓名、学号、学院等）
+2. 填写项目名称和指导教师
+3. 点击"生成报告"按钮
+4. 下载生成的 Word 文档
+
+## 部署到 Streamlit Cloud
+
+1. 将代码推送到 GitHub
+2. 访问 [Streamlit Cloud](https://streamlit.io/cloud)
+3. 连接你的 GitHub 仓库
+4. 选择 `app.py` 作为主文件
+5. 点击部署
+
+## 技术栈
+
+- Python 3.8+
+- Streamlit
+- python-docx
+
+## 许可证
+
+MIT License
+</parameter>
+</invoke>
+<invoke name="create_file">
+<parameter name="path">.gitignore</parameter>
+<parameter name="content">__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
