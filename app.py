@@ -354,7 +354,6 @@ python-docx==1.1.0
 <parameter name="path">README.md</parameter>
 <parameter name="content"># 岗前综合技能培训报告生成器
 
-这是一个基于 Streamlit 的自动化报告生成工具，用于生成海南软件职业技术学院岗前综合技能培训报告。
 
 ## 功能特点
 
@@ -420,4 +419,5 @@ ENV/
 build/
 dist/
 *.egg-info/
+
 
