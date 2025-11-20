@@ -1,6 +1,6 @@
 
 
-<parameter name="path">training_report_generator.py</parameter>
+
 </invoke>
 <invoke name="create_file">
 <parameter name="path">app.py</parameter>
@@ -353,6 +353,7 @@ python-docx==1.1.0
 <invoke name="create_file">
 <parameter name="path">README.md</parameter>
 <parameter name="content"># 岗前综合技能培训报告生成器
+
 
 
 
