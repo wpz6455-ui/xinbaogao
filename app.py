@@ -1,5 +1,3 @@
-好的，我来创建一个完整的可以在GitHub上运行的项目。让我先清理旧文件，然后创建完整的项目结构：
-
 <function_calls>
 <invoke name="delete_file">
 <parameter name="path">training_report_generator.py</parameter>
@@ -422,3 +420,4 @@ ENV/
 build/
 dist/
 *.egg-info/
+
